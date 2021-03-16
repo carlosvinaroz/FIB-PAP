@@ -1,0 +1,18 @@
+LEVEL CPU SIZE 6
+1.boada-2
+2.boada-2
+3.boada-2
+4.boada-2
+5.boada-2
+6.boada-2
+
+LEVEL NODE SIZE 1
+boada-2
+
+LEVEL THREAD SIZE 6
+THREAD 1.1.1
+THREAD 1.1.2
+THREAD 1.1.3
+THREAD 1.1.4
+THREAD 1.1.5
+THREAD 1.1.6
