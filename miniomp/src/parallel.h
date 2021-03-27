@@ -8,6 +8,7 @@ typedef struct {
     void (*fn) (void *);
     void *fn_data;
     int id;
+    pthread_barrier_t *barrier;
     // complete the definition of parallel descriptor
 } miniomp_parallel_t;
 
