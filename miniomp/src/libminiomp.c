@@ -19,6 +19,8 @@ init_miniomp(void) {
 	pthread_mutex_init(& miniomp_default_lock,NULL);
 	pthread_barrier_init(&miniomp_barrier, NULL, omp_get_num_threads());
 	// Initialize OpenMP workdescriptors for single 
+	miniomp_single.single=false;
+	miniomp_single.idThread=-1;
 	// Initialize OpenMP task queue for task and taskloop
 }
 
