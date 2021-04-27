@@ -4,32 +4,68 @@ miniomp_taskqueue_t * miniomp_taskqueue;
 
 // Initializes the task queue
 miniomp_taskqueue_t *TQinit(int max_elements) {
-    return NULL;
+	// Reserve memory to task queue
+	miniomp_taskqueue = malloc(sizeof(miniomp_taskqueue_t));
+	// Initialitzes the task queue
+	miniomp_taskqueue->max_elements=max_elements;
+	miniomp_taskqueue->count=0;
+	miniomp_taskqueue->head=0;
+	miniomp_taskqueue->tail=0;
+	miniomp_taskqueue->first=0;
+	pthread_mutex_init(&miniomp_taskqueue->mutexQueue, NULL);
+	miniomp_taskqueue->queue = malloc(max_elements*sizeof(miniomp_task_t));
+	// Return task queue
+    	return miniomp_taskqueue;
 }
 
 // Checks if the task queue is empty
 bool TQis_empty(miniomp_taskqueue_t *task_queue) {
-    return true;
+	return task_queue->count==0;
 }
 
 // Checks if the task queue is full
 bool TQis_full(miniomp_taskqueue_t *task_queue) {
-    return false;
+	return task_queue->max_elements==task_queue->count;
 }
 
 // Enqueues the task descriptor at the tail of the task queue
 bool TQenqueue(miniomp_taskqueue_t *task_queue, miniomp_task_t *task_descriptor) {
-    return true;
+	// Protect the task queue acces to modify
+	pthread_mutex_lock(&task_queue->mutexQueue);
+	// If the task queue is not full, we enqueue
+	if(!TQis_full(task_queue)){
+		int tail = task_queue->tail;
+		task_queue->queue[tail] = task_descriptor;
+		task_queue->tail =(tail+1)%task_queue->max_elements;
+		task_queue->count+=1;
+		pthread_mutex_unlock(&task_queue->mutexQueue);
+		return true;
+	}
+	pthread_mutex_unlock(&task_queue->mutexQueue);
+	// If is full, we don't enqueue
+	return false;
 }
 
 // Dequeue the task descriptor at the head of the task queue
 bool TQdequeue(miniomp_taskqueue_t *task_queue) { 
-    return true;
+	// Protect the tasj queue acces to modify
+	pthread_mutex_lock(&task_queue->mutexQueue);
+	// If the task queue is not empty, we dequeue
+	if(!TQis_empty(task_queue)){
+		int head = task_queue->head;
+		task_queue->head =(head+1)%task_queue->max_elements;
+		task_queue->count-=1;
+		pthread_mutex_unlock(&task_queue->mutexQueue);
+		return true;
+	}
+	pthread_mutex_unlock(&task_queue->mutexQueue);
+	// If is empty, we don't dequeue
+	return false;
 }
 
 // Returns the task descriptor at the head of the task queue
 miniomp_task_t *TQfirst(miniomp_taskqueue_t *task_queue) {
-    return NULL;
+    return task_queue->queue[task_queue->head];
 }
 
 #define GOMP_TASK_FLAG_UNTIED           (1 << 0)
@@ -75,5 +111,8 @@ GOMP_task (void (*fn) (void *), void *data, void (*cpyfn) (void *, void *),
     }
 
     // Function invocation should be replaced with the appropriate task instatiation
-    fn (arg);
+	miniomp_task_t *task=malloc(sizeof(miniomp_task_t));
+	task->fn=fn;
+	task->data=arg;
+	TQenqueue(miniomp_taskqueue, task);    
 }

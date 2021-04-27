@@ -22,12 +22,12 @@ init_miniomp(void) {
 	miniomp_single.single=false;
 	miniomp_single.idThread=-1;
 	// Initialize OpenMP task queue for task and taskloop
+	miniomp_taskqueue=TQinit(MAXELEMENTS_TQ);
 }
 
 void fini_miniomp(void) {
 	// delete Pthread thread-specific data
 	pthread_key_delete(miniomp_specifickey);
-
 	// free other data structures allocated during library initialization
 	pthread_mutex_destroy(&miniomp_default_lock);
 	pthread_barrier_destroy(&miniomp_barrier);
