@@ -5,10 +5,10 @@ extern pthread_t *miniomp_threads;
 
 // Type declaration for parallel descriptor (arguments needed to create pthreads)
 typedef struct {
-    void (*fn) (void *);
-    void *fn_data;
-    int id;
-    pthread_barrier_t *barrier;    
+	void (*fn) (void *);
+	void *fn_data;
+	int id;
+	pthread_barrier_t *barrier;    
 } miniomp_parallel_t;
 
 extern miniomp_parallel_t *miniomp_parallel;

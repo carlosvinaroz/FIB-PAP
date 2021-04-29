@@ -37,7 +37,7 @@ void GOMP_parallel (void (*fn) (void *), void *data, unsigned num_threads, unsig
 	// Set default number of threads
 	if(!num_threads) num_threads = omp_get_num_threads();
 	// If we have the number of threads specified,
-	// We update the explicit barrier
+	// We update the explicit barriers
 	else{
 		miniomp_icv.nthreads_var = num_threads;
 		pthread_barrier_init(&miniomp_barrier, NULL, num_threads);

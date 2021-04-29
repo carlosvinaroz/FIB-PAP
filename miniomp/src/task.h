@@ -1,19 +1,19 @@
 /* This structure describes a "task" to be run by a thread.  */
 typedef struct {
-    void (*fn)(void *);
-    void (*data);
-    // complete with additional field if needed
+	void (*fn)(void *);
+	void (*data);
+	bool taskgroup;
 } miniomp_task_t;
 
 typedef struct {
-    int max_elements;
-    int count;
-    int head;
-    int tail;
-    int first;
+	int max_elements;
+	int count;
+	int taskgroupCount;
+	int head;
+	int tail;
+	int first;
 	pthread_mutex_t mutexQueue;
-    miniomp_task_t **queue;
-    // complete with additional field if needed
+	miniomp_task_t **queue;
 } miniomp_taskqueue_t;
 
 extern miniomp_taskqueue_t * miniomp_taskqueue;
